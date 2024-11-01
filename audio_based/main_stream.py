@@ -1,7 +1,7 @@
 import subprocess
 import numpy as np
 from scipy.signal import find_peaks
-import uuid
+from datetime import datetime
 import os
 import multiprocessing
 import json
@@ -101,8 +101,10 @@ def detect_audio_spikes(audio_queue, stream_url, sample_rate, clip_duration=DEFA
             print(f"Detection error: {e}")
 
 def trim_stream_clip(stream_url, start_time, duration=DEFAULT_CLIP_DURATION):
-    output_file = f"video_chunks/{uuid.uuid4()}.mp4"
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_file = f"video_chunks/clip_{timestamp}.mp4"
     os.makedirs("video_chunks", exist_ok=True)
+    
     command = [
         'ffmpeg',
         '-i', stream_url,
@@ -113,6 +115,7 @@ def trim_stream_clip(stream_url, start_time, duration=DEFAULT_CLIP_DURATION):
         '-y',
         output_file
     ]
+    
     result = subprocess.run(command)
     if result.returncode == 0:
         print(f"Saved clip to {output_file}")
